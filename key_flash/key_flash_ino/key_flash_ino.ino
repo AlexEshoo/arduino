@@ -9,26 +9,61 @@ int potPin = A0;
 
 LPD8806 strip = LPD8806(nLEDs,dataPin,clockPin);
 
+struct led {
+  int R;
+  int G;
+  int B;
+};
+
 void setup() {
   strip.begin();
   strip.show();
   Serial.begin(115200);
 }
 
+String RGB = "!000000000";
+
 void loop() {
  if(Serial.available() > 0){
    char data = Serial.read();
-   for (int j=0; j<strip.numPixels(); j++){
-     strip.setPixelColor(j, strip.Color(127,127,127));
-   }
-   strip.show();
    char str[2];
    str[0] = data;
    str[1] = '\0';
    Serial.print(str);
-   for (int j=0; j<strip.numPixels(); j++){
-     strip.setPixelColor(j, strip.Color(0,0,0));
+   
+   if (data == '?'){
+    parseMsg(RGB);
+    RGB = "";
    }
-   strip.show()
+   else {
+     RGB += data;
+   }
+//   for (int j=0; j<strip.numPixels(); j++){
+//     strip.setPixelColor(j, strip.Color(127,127,127));
+//   }
+//   strip.show();
+//   char str[2];
+//   str[0] = data;
+//   str[1] = '\0';
+//   Serial.print(data);
+//   for (int j=0; j<strip.numPixels(); j++){
+//     strip.setPixelColor(j, strip.Color(0,0,0));
+//   }
+//   strip.show();
  }
+}
+
+void parseMsg(String data_frame){
+  String R;
+  String G;
+  String B;
+  
+  R = data_frame.substring(1,3);
+  G = data_frame.substring(4,6);
+  B = data_frame.substring(7,9);
+  
+  for (int j=0; j<strip.numPixels(); j++){
+     strip.setPixelColor(j, strip.Color(R.toInt(),G.toInt(),B.toInt()));
+  }
+  strip.show(); 
 }

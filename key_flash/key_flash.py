@@ -8,10 +8,11 @@ time.sleep(1)
 while True:
 	while msvcrt.kbhit():
 		x = msvcrt.getch()
-		arduino.write(x)
+		arduino.write("!000000127?")
 		data = arduino.readline()
-		
+
 		if data:
 			print data
 	
-	arduino.write(0)
+	arduino.write("!000000000?") #Write no light if there is no key press
+	time.sleep(0.01)
