@@ -26,10 +26,10 @@ String RGB = "000000000?";
 void loop() {
  if(Serial.available() > 0){
    char data = Serial.read();
-   char str[2];
-   str[0] = data;
-   str[1] = '\0';
-   Serial.print(str);
+   //char str[2];
+   //str[0] = data;
+   //str[1] = '\0';
+   //Serial.print(str);
    
    if (data == '?'){
     parseMsg(RGB);
@@ -50,8 +50,19 @@ void parseMsg(String data_frame){
   G = data_frame.substring(3,5);
   B = data_frame.substring(6,8);
   
-  for (int j=0; j<strip.numPixels(); j++){
-     strip.setPixelColor(j, strip.Color(R.toInt(),G.toInt(),B.toInt()));
+  if (data_frame.length() < 10) {
+    for (int j=0; j<strip.numPixels(); j++){
+       strip.setPixelColor(j, strip.Color(R.toInt(),G.toInt(),B.toInt()));
+    }
+  }
+  
+  else {
+    String addr = data_frame.substring(9,40);
+    for (int j=0; j<32; j++) {
+      if (data_frame[j] == '1') {
+        strip.setPixelColor(j, strip.Color(R.toInt(),G.toInt(),B.toInt()));
+      }
+    }
   }
   strip.show();
 }

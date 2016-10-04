@@ -16,6 +16,7 @@ def sendColor(R,G,B):
 	msg += str(R).zfill(3)
 	msg += str(G).zfill(3)
 	msg += str(B).zfill(3)
+	msg += "11100000000000000000000000000001"
 	msg += "?"
 	
 	arduino.write(msg)
@@ -23,6 +24,8 @@ def sendColor(R,G,B):
 def handle_events(args):
 	if isinstance(args, KeyboardEvent):
 		if args.event_type == 'key down':
+			data = arduino.readline()
+			if data: print data
 			if args.key_code in range(65,91):
 				sendColor(50,0,127)
 			elif args.current_key == 'Escape':
