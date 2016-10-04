@@ -21,7 +21,7 @@ void setup() {
   Serial.begin(115200);
 }
 
-String RGB = "!000000000";
+String RGB = "000000000?";
 
 void loop() {
  if(Serial.available() > 0){
@@ -58,12 +58,12 @@ void parseMsg(String data_frame){
   String G;
   String B;
   
-  R = data_frame.substring(1,3);
-  G = data_frame.substring(4,6);
-  B = data_frame.substring(7,9);
+  R = data_frame.substring(0,2);
+  G = data_frame.substring(3,5);
+  B = data_frame.substring(6,8);
   
   for (int j=0; j<strip.numPixels(); j++){
      strip.setPixelColor(j, strip.Color(R.toInt(),G.toInt(),B.toInt()));
   }
-  strip.show(); 
+  strip.show();
 }
