@@ -1,6 +1,6 @@
 import serial
 import time
-import msvcrt
+from pyhooked import Hook, KeyboardEvent
 
 arduino = serial.Serial('COM3' , 115200, timeout=.1)
 time.sleep(1)
@@ -19,20 +19,15 @@ def sendColor(R,G,B):
 	msg += "?"
 	
 	arduino.write(msg)
-
-while True:
-	while msvcrt.kbhit():
-		x = msvcrt.getch()
-		sendColor(0,0,127)
-		#arduino.write("000000127?")
-		flag = True
-		data = arduino.readline()
-
-		if data:
-			print data
 	
-	if flag: 
-		arduino.write("000000000?") #Write no light if there is no key press
-		flag = False
-	time.sleep(0.01)
-	
+def handle_events(args):
+	if isinstance(args, KeyboardEvent):
+		if args.event_type == 'key down':
+			sendColor(0,0,127)
+		else:
+			sendColor(0,0,0)
+			time.sleep(0.01)
+
+hk = Hook()  # make a new instance of PyHooked
+hk.handler = handle_events  # add a new shortcut ctrl+a, or triggered on mouseover of (300,400)
+hk.hook()  # hook into the events, and listen to the presses
