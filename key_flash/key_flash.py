@@ -23,7 +23,12 @@ def sendColor(R,G,B):
 def handle_events(args):
 	if isinstance(args, KeyboardEvent):
 		if args.event_type == 'key down':
-			sendColor(0,0,127)
+			if args.key_code in range(65,91):
+				sendColor(50,0,127)
+			elif args.current_key == 'Escape':
+				sendColor(127,0,0)
+			else:
+				sendColor(0,0,127)
 		else:
 			sendColor(0,0,0)
 			time.sleep(0.01)

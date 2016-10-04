@@ -38,18 +38,6 @@ void loop() {
    else {
      RGB += data;
    }
-//   for (int j=0; j<strip.numPixels(); j++){
-//     strip.setPixelColor(j, strip.Color(127,127,127));
-//   }
-//   strip.show();
-//   char str[2];
-//   str[0] = data;
-//   str[1] = '\0';
-//   Serial.print(data);
-//   for (int j=0; j<strip.numPixels(); j++){
-//     strip.setPixelColor(j, strip.Color(0,0,0));
-//   }
-//   strip.show();
  }
 }
 
