@@ -48,9 +48,7 @@ def handle_events(args):
 			else:
 				sendColor(0,0,127)
 		elif args.event_type == 'key up' and len(args.pressed_key) == 0:
-			print "GOGOGO"#Runs on key up events
 			sendColor(0,0,0)
-			#time.sleep(0.01)
 
 hk = Hook()  # make a new instance of PyHooked
 hk.handler = handle_events  # add a new shortcut ctrl+a, or triggered on mouseover of (300,400)
