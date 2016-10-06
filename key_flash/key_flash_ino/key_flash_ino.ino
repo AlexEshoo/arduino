@@ -21,24 +21,18 @@ void setup() {
   Serial.begin(115200);
 }
 
-String RGB = "000000000?";
+String msg;
 
 void loop() {
- if(Serial.available() > 0){
-   char data = Serial.read();
-   //char str[2];
-   //str[0] = data;
-   //str[1] = '\0';
-   //Serial.print(str);
-   
-   if (data == '?'){
-    parseMsg(RGB);
-    RGB = "";
-   }
-   else {
-     RGB += data;
-   }
- }
+  if(Serial.available() > 0){
+    char data = Serial.read();
+    msg += data;
+
+    if (data == '?'){
+      parseMsg(msg);
+      msg = "";
+    }
+  }
 }
 
 void parseMsg(String data_frame){
@@ -50,17 +44,17 @@ void parseMsg(String data_frame){
   G = data_frame.substring(3,5);
   B = data_frame.substring(6,8);
   
-  if (data_frame.length() < 10) {
+  if (data_frame.length() < 11) {
     for (int j=0; j<strip.numPixels(); j++){
        strip.setPixelColor(j, strip.Color(R.toInt(),G.toInt(),B.toInt()));
     }
   }
   
   else {
-    String addr = data_frame.substring(9,40);
-    for (int j=0; j<32; j++) {
-      if (data_frame[j] == '1') {
-        strip.setPixelColor(j, strip.Color(R.toInt(),G.toInt(),B.toInt()));
+    String addr = data_frame.substring(9,41);
+    for (int k=9; k<41; k++) {
+      if (data_frame[k] == '1') {
+        strip.setPixelColor(k-9, strip.Color(R.toInt(),G.toInt(),B.toInt()));
       }
     }
   }
