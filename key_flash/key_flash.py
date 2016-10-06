@@ -28,24 +28,29 @@ def sendColor(R,G,B, led_ids = None):
 		msg += ''.join(str(e) for e in addrs)
 	
 	msg += "?"
-	print msg
-	print len(msg)
 	arduino.write(msg)
 	
+def numberPress(num):
+	if num in range(0,10):
+		sendColor(127,127,127,led_ids = [num])
+	else:
+		return
+
 def handle_events(args):
 	if isinstance(args, KeyboardEvent):
+		print args.current_key
 		if args.event_type == 'key down':
-			#data = arduino.readline()
-			#if data: print data
 			if args.key_code in range(65,91):
-				sendColor(50,0,127, led_ids = [-1,1,27,29,31])
+				sendColor(0,127,127)
+			elif args.current_key in [str(s)for s in range(0,10)] or args.current_key in ['Numpad{}'.format(s) for s in range(0,10)]:
+				numberPress(int(args.current_key[-1]))
 			elif args.current_key == 'Escape':
 				sendColor(127,0,0)
 			else:
 				sendColor(0,0,127)
 		else: #Runs on key up events
 			sendColor(0,0,0)
-			time.sleep(0.01)
+			#time.sleep(0.01)
 
 hk = Hook()  # make a new instance of PyHooked
 hk.handler = handle_events  # add a new shortcut ctrl+a, or triggered on mouseover of (300,400)
