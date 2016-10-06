@@ -51,7 +51,6 @@ void parseMsg(String data_frame){
   }
   
   else {
-    String addr = data_frame.substring(9,41);
     for (int k=9; k<41; k++) {
       if (data_frame[k] == '1') {
         strip.setPixelColor(k-9, strip.Color(R.toInt(),G.toInt(),B.toInt()));
