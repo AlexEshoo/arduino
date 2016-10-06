@@ -38,7 +38,6 @@ def numberPress(num):
 
 def handle_events(args):
 	if isinstance(args, KeyboardEvent):
-		print args.current_key
 		if args.event_type == 'key down':
 			if args.key_code in range(65,91):
 				sendColor(0,127,127)
@@ -48,9 +47,8 @@ def handle_events(args):
 				sendColor(127,0,0)
 			else:
 				sendColor(0,0,127)
-		else: #Runs on key up events
+		elif args.event_type == 'key up' and len(args.pressed_key) == 0:
 			sendColor(0,0,0)
-			#time.sleep(0.01)
 
 hk = Hook()  # make a new instance of PyHooked
 hk.handler = handle_events  # add a new shortcut ctrl+a, or triggered on mouseover of (300,400)
