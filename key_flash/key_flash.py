@@ -30,9 +30,12 @@ def sendColor(R,G,B, led_ids = None):
 	msg += "?"
 	arduino.write(msg)
 	
-def numberPress(num):
+def numberPress(num, off=False):
 	if num in range(0,10):
-		sendColor(127,127,127,led_ids = [num])
+		if off:
+			sendColor(0,0,0,led_ids = [num])
+		else:
+			sendColor(127,127,127,led_ids = [num])
 	else:
 		return
 
@@ -49,6 +52,10 @@ def handle_events(args):
 				sendColor(0,0,127)
 		elif args.event_type == 'key up' and len(args.pressed_key) == 0:
 			sendColor(0,0,0)
+		
+		elif args.event_type == 'key up':
+			if args.current_key in [str(s)for s in range(0,10)] or args.current_key in ['Numpad{}'.format(s) for s in range(0,10)]:
+				numberPress(int(args.current_key[-1]),off = True)
 
 hk = Hook()  # make a new instance of PyHooked
 hk.handler = handle_events  # add a new shortcut ctrl+a, or triggered on mouseover of (300,400)
