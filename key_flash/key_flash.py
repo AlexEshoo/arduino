@@ -115,7 +115,7 @@ def otherPress(key, key_up=False):
 	if key_up: 
 		return
 	
-	sendColor(0,0,127)
+	sendColor(42,8,71)
 
 def enterPress(key, key_up=False):
 	if key_up:
@@ -123,15 +123,31 @@ def enterPress(key, key_up=False):
 	
 	sendColor(0,127,0)
 	
+def escapePress(key, key_up=False):
+	if key_up:
+		return
+	
+	sendColor(127,0,0)
+
+def wasd(key, key_up=False):
+	if key_up:
+		return
+	
+	sendColor(127,0,0)
+
 dispatch = {}
 for key in ID_TO_KEY:
 	item = ID_TO_KEY[key]
-	if item.isalpha() and len(item) == 1:
-		dispatch[item] = letterPress
-	elif item in [str(s)for s in range(0,10)] or item in ['Numpad{}'.format(s) for s in range(0,10)]:
+	if item in [str(s)for s in range(0,10)] or item in ['Numpad{}'.format(s) for s in range(0,10)]:
 		dispatch[item] = numberPress
-	elif item == 'Enter':
+	elif item == 'Return':
 		dispatch[item] = enterPress
+	elif item == 'Escape':
+		dispatch[item] = escapePress
+	elif item in ['W','A','S','D']:
+		dispatch[item] = wasd
+	elif item.isalpha() and len(item) == 1:
+		dispatch[item] = letterPress
 	else:
 		dispatch[item] = otherPress
 
