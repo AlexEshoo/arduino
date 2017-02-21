@@ -97,43 +97,60 @@ save = Bind('J',['Lcontrol'],ctrlJ_func)
 # objects that getBind() iterates over to a minimum. Therfore a dispatcher is ideal since it    #
 # will know the callback to use for a given key without need to check all of them.              #
 # ############################################################################################# #
-	
-def numberPress(num, key_up=False):
-	if int(num) in range(0,10):
-		if key_up:
-			sendColor(0,0,0,led_ids = [int(num)])
+def numberPress(event):
+	if int(event.current_key) in range(0,10):
+		if event.event_type == 'key up':
+			sendColor(0,0,0,led_ids = [int(event.current_key)])
 		else:
-			sendColor(127,127,127,led_ids = [int(num)])
+			sendColor(127,127,127,led_ids = [int(event.current_key)])
 
-def letterPress(l, key_up=False):
-	if key_up:
+def letterPress(event):
+	if event.event_type == 'key up':
 		return
 		
 	sendColor(0,127,127)
 	
-def otherPress(key, key_up=False):
-	if key_up: 
+def otherPress(event):
+	if event.event_type == 'key up': 
 		return
 	
 	sendColor(42,8,71)
 
-def enterPress(key, key_up=False):
-	if key_up:
+def enterPress(event):
+	if event.event_type == 'key up':
 		return
 	
 	sendColor(0,127,0)
 	
-def escapePress(key, key_up=False):
-	if key_up:
+def escapePress(event):
+	if event.event_type == 'key up':
 		return
 	
 	sendColor(127,0,0)
 
-def wasd(key, key_up=False):
-	if key_up:
-		return
+def wasd(event):
+	R,G,B = (63,63,63)
+	leds = [] # Causes all write on up events that makes me sad.
+	if 'W' in event.pressed_key:
+		R += 64
+		G += 64
+		B += 64
+	if 'S' in event.pressed_key:
+		R -= 33
+		G -= 33
+		B -= 33
+	if 'A' in event.current_key:
+		if event.event_type == 'key down':
+			leds.extend(range(0,16))
+		else:
+			sendColor(0,0,0,range(0,16))
+	if 'D' in event.current_key:
+		if event.event_type == 'key down':
+			leds.extend(range(16,32))
+		else:
+			sendColor(0,0,0,range(16,32))
 	
-	sendColor(127,0,0)
+	sendColor(R,G,B,led_ids=leds)
 
 dispatch = {}
 for key in ID_TO_KEY:
@@ -144,8 +161,8 @@ for key in ID_TO_KEY:
 		dispatch[item] = enterPress
 	elif item == 'Escape':
 		dispatch[item] = escapePress
-	elif item in ['W','A','S','D']:
-		dispatch[item] = wasd
+	#elif item in ['W','A','S','D']:
+		#dispatch[item] = wasd
 	elif item.isalpha() and len(item) == 1:
 		dispatch[item] = letterPress
 	else:
@@ -163,10 +180,8 @@ def handle_events(args):
 		try:
 			getBind(args).handler(args.current_key)
 		except AttributeError:
-			if args.event_type == 'key down':
-				dispatch[args.current_key](args.current_key)
-			elif args.event_type == 'key up' and len(args.pressed_key) > 0:
-				dispatch[args.current_key](args.current_key, key_up=True)
+			if len(args.pressed_key) > 0:
+				dispatch[args.current_key](args)
 			else:
 				sendColor(0,0,0)
 			
