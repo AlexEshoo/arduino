@@ -97,7 +97,6 @@ save = Bind('J',['Lcontrol'],ctrlJ_func)
 # objects that getBind() iterates over to a minimum. Therfore a dispatcher is ideal since it    #
 # will know the callback to use for a given key without need to check all of them.              #
 # ############################################################################################# #
-	
 def numberPress(event):
 	if int(event.current_key) in range(0,10):
 		if event.event_type == 'key up':
@@ -140,12 +139,12 @@ def wasd(event):
 		R -= 33
 		G -= 33
 		B -= 33
-	if 'A' in event.pressed_key:
+	if 'A' in event.current_key:
 		if event.event_type == 'key down':
 			leds.extend(range(0,16))
 		else:
 			sendColor(0,0,0,range(0,16))
-	if 'D' in event.pressed_key:
+	if 'D' in event.current_key:
 		if event.event_type == 'key down':
 			leds.extend(range(16,32))
 		else:
@@ -162,8 +161,8 @@ for key in ID_TO_KEY:
 		dispatch[item] = enterPress
 	elif item == 'Escape':
 		dispatch[item] = escapePress
-	elif item in ['W','A','S','D']:
-		dispatch[item] = wasd
+	#elif item in ['W','A','S','D']:
+		#dispatch[item] = wasd
 	elif item.isalpha() and len(item) == 1:
 		dispatch[item] = letterPress
 	else:
