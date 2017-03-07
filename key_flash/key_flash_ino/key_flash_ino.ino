@@ -30,47 +30,30 @@ String msg;
 void loop() {
   timerState = digitalRead(TIMER_OUT_PIN);
   if (timerState == LOW) {
-    goIdle();
+    rainbowIdle();
   }
   
   else if(Serial.available() > 0){
-    Serial.print("Message Incoming");
     triggerTimer();
-    while (Serial.available() > 0) {
-      Serial.read();
-    }
-    Serial.print("finished reading");
-    //char data = Serial.read();
-    //msg += data;
+    char data = Serial.read();
+    msg += data;
 
-    //if (data == '?'){
-      //parseMsg(msg);
-      //msg = "";
-    //}
-  }
-  else {
-    Serial.println(i);
-    delay(1000);
-    i++;
+    if (data == '?'){
+      parseMsg(msg);
+      msg = "";
+    }
   }
 } 
 
 void triggerTimer() {
   digitalWrite(TRIGGER_PIN, LOW);
-  delay(100);
+  //delay(5);
+  /* When included, triggering works as desired
+  (resets on new message, idle 27s out from last press)
+  but input delay is large.
+  When left out, reset is not a sure thing, but serial 
+  data always recieved.*/
   digitalWrite(TRIGGER_PIN, HIGH);
-  delay(10); //Allow time for 555 out to go HIGH again
-  return;
-}
-
-void goIdle() {
-  i=0;
-  while (Serial.available() == 0) {
-    digitalWrite(13, HIGH);
-    delay(100);
-  }
-  digitalWrite(13, LOW);
-  triggerTimer();
   return;
 }
 
@@ -97,4 +80,46 @@ void parseMsg(String data_frame){
     }
   }
   strip.show();
+}
+
+void rainbowIdle() {
+  int i, j;
+   
+  for (j=0; j < 384; j++) {     // 3 cycles of all 384 colors in the wheel
+    for (i=0; i < strip.numPixels(); i++) {
+      if (Serial.available() > 0) {
+        triggerTimer();
+        return;
+      }
+      strip.setPixelColor(i, Wheel( (i + j) % 384));
+    }  
+    strip.show();   // write all the pixels out
+    delay(100);
+  }
+}
+
+//Input a value 0 to 384 to get a color value.
+//The colours are a transition r - g -b - back to r
+uint32_t Wheel(uint16_t WheelPos)
+{
+  byte r, g, b;
+  switch(WheelPos / 128)
+  {
+    case 0:
+      r = 127 - WheelPos % 128;   //Red down
+      g = WheelPos % 128;      // Green up
+      b = 0;                  //blue off
+      break; 
+    case 1:
+      g = 127 - WheelPos % 128;  //green down
+      b = WheelPos % 128;      //blue up
+      r = 0;                  //red off
+      break; 
+    case 2:
+      b = 127 - WheelPos % 128;  //blue down 
+      r = WheelPos % 128;      //red up
+      g = 0;                  //green off
+      break; 
+  }
+  return(strip.Color(r,g,b));
 }
